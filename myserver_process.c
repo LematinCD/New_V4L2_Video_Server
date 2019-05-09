@@ -518,8 +518,8 @@ void recv_video_data_handle(void *args,int length)
 	}
 	pre_frame = frame.clone();
 #ifdef DEBUG
-	imshow("result",frame);
-	waitKey(50);
+	//imshow("result",frame);
+	//waitKey(50);
 #endif
 	
 	
