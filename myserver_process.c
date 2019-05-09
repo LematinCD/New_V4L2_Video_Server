@@ -283,7 +283,7 @@ void thread_send_alarm_pause()
 	}
 }
 
-#define IPSTR "39.104.164.214"
+#define IPSTR "47.100.210.163"
 #define PORT 8091
 #define BUFSIZE 1024
 #define TIME_OUT_TIME 20 //connect超时时间20秒
@@ -354,8 +354,8 @@ int send_alarm_handle()
     sprintf(str, "%d", len);
 
     memset(str1, 0, 4096);
-    strcat(str1, "POST http://39.104.164.214:8091/alarm  HTTP/1.1\r\n");
-    strcat(str1, "Host:39.104.164.214:8091\r\n");
+    strcat(str1, "POST http://47.100.210.163:8091/alarm  HTTP/1.1\r\n");
+    strcat(str1, "Host:47.100.210.163:8091\r\n");
     //strcat(str1, "Content-Type: application/x-www-form-urlencoded\n");
     strcat(str1, "Content-Type:application/json\r\n");
     //Content-Type:application/json
@@ -387,6 +387,7 @@ int send_alarm_handle()
 
 err:
     printf("lex---err!!!!!!!!!!!!!\n");
+    printf("创建网络连接失败,本线程即将终止--inet_pton error!\n");
     FD_ZERO(&t_set);
     FD_SET(sockfd, &t_set);
     close(sockfd);
@@ -477,6 +478,7 @@ void recv_video_data_handle(void *args,int length)
 {
 	int ret=0,count =0,i=0;
 	int fd;
+	int send_count = 0;
 	long unsigned int result;
 	unsigned char rgbBuf[MY_WIDE*MY_HIGH*4];
 	
@@ -535,23 +537,24 @@ void recv_video_data_handle(void *args,int length)
 	
 	if((start_alarm_frame_count >= 3)){
 		//printf("Lex---检测到物体移动\n");
-		
+		for(send_count = 0;send_count<3;send_count++)
+			send_alarm_handle();	
 		thread_send_alarm_resume();
 		start_alarm_frame_count = 0;
 	}
-	//if(result == 0 ){
-		//stop_alarm_frame_count++;
+	if(result == 0 ){
+		stop_alarm_frame_count++;
 		//printf("Lex---stop_alarm_frame_count:%d\n",stop_alarm_frame_count);
-	//}
-	//if(stop_alarm_frame_count == 100){
+	}
+	if(stop_alarm_frame_count == 800){
 		//printf("lex---stop_alarm_frame_count == 100\n");
 		
-		//thread_send_alarm_pause();		
+		thread_send_alarm_pause();		
 		//close_file();
-		//stop_alarm_frame_count = 0;
+		stop_alarm_frame_count = 0;
 		//close_encoder();
 		
-	//}
+	}
 }
 
 
