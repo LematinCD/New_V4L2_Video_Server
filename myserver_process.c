@@ -528,19 +528,20 @@ void recv_video_data_handle(void *args,int length)
 		return;
 	}
 
-	if(result>3){
+	if(result>2){
 		
 		start_alarm_frame_count++;
 		//printf("lex---alarm_frame_count:%d\n",alarm_frame_count);
 		
 	}
 	
-	if((start_alarm_frame_count >= 3)){
+	if((start_alarm_frame_count >= 2)){
 		//printf("Lex---检测到物体移动\n");
 		for(send_count = 0;send_count<3;send_count++)
 			send_alarm_handle();	
 		thread_send_alarm_resume();
 		start_alarm_frame_count = 0;
+		stop_alarm_frame_count = 0;
 	}
 	if(result == 0 ){
 		stop_alarm_frame_count++;
